@@ -1,0 +1,33 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "b656bde1b1cb4cab821e35017dadf01e"
+name = "xecrox"
+handle = "xecrox"
+application_url = "https://team-arcade-destroyed-pat.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "centranage.myshopify.com"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = ""
+
+[auth]
+redirect_urls = [
+  "https://team-arcade-destroyed-pat.trycloudflare.com/auth/callback",
+  "https://team-arcade-destroyed-pat.trycloudflare.com/auth/shopify/callback",
+  "https://team-arcade-destroyed-pat.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-07"
+
+[app_proxy]
+url = "https://team-arcade-destroyed-pat.trycloudflare.com/proxy"
+subpath = "connect"
+prefix = "community"
+
+[pos]
+embedded = false

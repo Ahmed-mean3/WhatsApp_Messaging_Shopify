@@ -1,0 +1,28 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "a7284d228b7274e57010a093c3b5e03f"
+name = "diversified-revenue-app"
+handle = "diversified-revenue-app-14"
+application_url = "https://malaysia-distributions-quest-nursery.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "centranage.myshopify.com"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://malaysia-distributions-quest-nursery.trycloudflare.com/auth/callback",
+  "https://malaysia-distributions-quest-nursery.trycloudflare.com/auth/shopify/callback",
+  "https://malaysia-distributions-quest-nursery.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-07"
+
+[pos]
+embedded = false

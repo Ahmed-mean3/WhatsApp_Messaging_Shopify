@@ -1,0 +1,29 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "a905beb0db99b221f5d748a2fd796019"
+name = "soma"
+handle = "soma"
+application_url = "https://neutral-whose-nokia-constraint.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "centranage.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = ""
+
+[auth]
+redirect_urls = [
+  "https://neutral-whose-nokia-constraint.trycloudflare.com/auth/callback",
+  "https://neutral-whose-nokia-constraint.trycloudflare.com/auth/shopify/callback",
+  "https://neutral-whose-nokia-constraint.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-07"
+
+[pos]
+embedded = false

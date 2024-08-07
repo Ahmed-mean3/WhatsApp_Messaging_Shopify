@@ -188,7 +188,6 @@ app.post("/api/shopify-webhook", async (req, res) => {
 // }
 
 //WATI
-
 async function sendWhatsappMsg(phoneNumber, message) {
   phoneNumber = phoneNumber.replace(/\s+/g, "");
   phoneNumber = phoneNumber.replace("+", "");

@@ -1,0 +1,29 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "23379c3a1198bfec551c2bf2549df340"
+name = "as"
+handle = "as-15"
+application_url = "https://hon-bd-relations-conversations.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "centranage.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = ""
+
+[auth]
+redirect_urls = [
+  "https://hon-bd-relations-conversations.trycloudflare.com/auth/callback",
+  "https://hon-bd-relations-conversations.trycloudflare.com/auth/shopify/callback",
+  "https://hon-bd-relations-conversations.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-07"
+
+[pos]
+embedded = false

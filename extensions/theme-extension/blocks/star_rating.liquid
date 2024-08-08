@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <style>
+    #open-form-button {
+      padding: 15px 30px;
+      background-color: #000;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background-color 0.3s;
+    }
+
+    #popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    #popup h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    #popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 999;
+    }
+
+    #custom-form-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    #custom-form-container div {
+      margin-bottom: 15px;
+    }
+
+    #custom-form-container input,
+    #custom-form-container select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    #custom-form-container label {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .close-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    #submit-input {
+      padding: 5px 15px;
+      background-color: #000;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background-color 0.3s;
+    }
+  </style>
+  <body>
+    <button id="open-form-button">Checkout Button</button>
+    <div id="popup-overlay"></div>
+    <div id="popup">
+      <svg
+        class="close-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+      <h2>User Input</h2>
+      <div id="custom-form-container">
+        <form id="custom-form">
+          <div>
+            <label for="custom-firstname">First Name</label
+            ><input
+              type="text"
+              id="custom-firstname"
+              placeholder="Enter your first name"
+            />
+          </div>
+          <div>
+            <label for="custom-lastname">Last Name</label
+            ><input
+              type="text"
+              id="custom-lastname"
+              placeholder="Enter your last name"
+            />
+          </div>
+          <div>
+            <label for="custom-email">Email</label
+            ><input
+              type="email"
+              id="custom-email"
+              placeholder="Enter your email"
+            />
+          </div>
+          <div>
+            <label for="custom-phone">Phone Number</label>
+            <input
+              type="tel"
+              id="custom-phone"
+              placeholder="Enter your phone number"
+            />
+          </div>
+          <div>
+            <label for="custom-country">Country</label>
+            <select id="custom-country" name="country" class="form-control">
+              <option value="Afghanistan">Afghanistan</option>
+              <option value="Åland Islands">Åland Islands</option>
+              <option selected="selected" value="pakistan">Pakistan</option>
+            </select>
+          </div>
+          <div>
+            <label for="custom-city">City</label>
+            <select id="custom-city" style="display: none">
+              <option value="Islamabad">Islamabad</option>
+            </select>
+          </div>
+          <button type="submit" id="submit-input">Submit</button>
+        </form>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("open-form-button")
+          .addEventListener("click", function () {
+            document.getElementById("popup-overlay").style.display = "block";
+            document.getElementById("popup").style.display = "block";
+          });
+
+        document
+          .querySelector(".close-icon")
+          .addEventListener("click", function () {
+            document.getElementById("popup-overlay").style.display = "none";
+            document.getElementById("popup").style.display = "none";
+          });
+
+        document
+          .getElementById("custom-country")
+          .addEventListener("change", function () {
+            let country = document.getElementById("custom-country").value;
+            let cityDropdown = document.getElementById("custom-city");
+
+            if (country === "pakistan") {
+              cityDropdown.style.display = "block";
+            } else {
+              cityDropdown.style.display = "none";
+            }
+          });
+
+        document
+          .getElementById("custom-form")
+          .addEventListener("submit", async function (event) {
+            event.preventDefault();
+            // const saveData = async (data) => {
+          
+          // };
+            let firstName = document.getElementById("custom-firstname").value;
+            let lastName = document.getElementById("custom-lastname").value;
+            let email = document.getElementById("custom-email").value;
+            let phone = document.getElementById("custom-phone").value;
+            let country = document.getElementById("custom-country").value;
+            let city = document.getElementById("custom-city").value;
+
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            let phonePattern = /^\+?[1-9]\d{1,14}$/;
+
+            if (!emailPattern.test(email)) {
+              alert("Please enter a valid email address.");
+              return;
+            }
+
+            if (phone && !phonePattern.test(phone)) {
+              alert("Please enter a valid phone number.");
+              return;
+            }
+
+            if (country === "pakistan" && !city) {
+              alert("Please select a city.");
+              return;
+            }
+
+            let userData = {
+              firstname: firstName,
+              lastname: lastName,
+              email: email,
+              phone: phone,
+              country: country,
+              city: city,
+            };
+
+            localStorage.setItem("userData", JSON.stringify(userData));
+            console.log('hitting....')
+            await fetch('https://2f17-202-47-48-97.ngrok-free.app/api/store-user_data', {
+              method: 'POST',
+              body: JSON.stringify({ key: 'exampleKey', value: 'exampleValue' }),
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }).then((res)=>{
+              console.log('data posted',res);
+            }).catch((e)=>console.log('cannot post data',e));
+            let queryParams = new URLSearchParams(userData).toString();
+            // window.location.href = `https://centranage.myshopify.com/checkouts/cn/Z2NwLXVzLWVhc3QxOjAxSjRSVjcxOEpTMkpISkZHNjZYODNKUUtL?${queryParams}`;
+          });
+      });
+    </script>
+  </body>
+</html>
+
+
+{% schema %}
+    {
+      "name": "Popup Button",
+      "target": "section",
+      "settings": [
+        { "type": "product", "id": "product", "label": "product", "autofill": true },
+        { "type": "color", "id": "colour", "label": "Star Colour", "default": "#ff0000" }
+      ]
+    }
+    {% endschema %}

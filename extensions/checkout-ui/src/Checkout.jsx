@@ -11,11 +11,26 @@ import {
   useShippingAddress,
 } from "@shopify/ui-extensions-react/checkout";
 import { Button } from "@shopify/ui-extensions/checkout";
+import { useEffect } from "react";
 
 // 1. Choose an extension target
 export default reactExtension("purchase.checkout.block.render", () => (
   <Extension />
 ));
+
+const fetchCustomData = async () => {
+  try {
+    const response = await fetch("/api/get-user_data");
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch custom data:", error);
+    return null;
+  }
+};
 
 function Extension() {
   const translate = useTranslate();
@@ -32,8 +47,14 @@ function Extension() {
       </Banner>
     );
   }
-
-  // 3. Render a UI
+  const getData = async () => {
+    const data = await fetchCustomData();
+    console.log("isData->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", data);
+  };
+  // useEffect(() => {
+  //   getData();
+  // }, []);
+  // 3. Render a U
   return (
     <BlockStack border={"dotted"} padding={"tight"}>
       <Banner title="checkout-ui">heello</Banner>
@@ -47,6 +68,7 @@ function Extension() {
       <Button
         onPress={() => {
           console.log("button was pressed");
+          getData();
         }}
       >
         Button testing api hit

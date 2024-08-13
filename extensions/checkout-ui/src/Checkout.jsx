@@ -12,26 +12,63 @@ import {
 } from "@shopify/ui-extensions-react/checkout";
 import { Button } from "@shopify/ui-extensions/checkout";
 import { useEffect } from "react";
-
+import axios from "axios";
 // 1. Choose an extension target
 export default reactExtension("purchase.checkout.block.render", () => (
   <Extension />
 ));
-
-const fetchCustomData = async () => {
+//https://fakestoreapi.com/products
+const fetchCustomData = async (e) => {
+  e.preventDefault();
   try {
-    const response = await fetch("/api/get-user_data");
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
+    const response = await fetch(
+      `https://centranage.myshopify.com/apps/proxy-1/getCheck?shop=centranage.myshopify.com`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    // Check if the response is HTML or JSON
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      console.log("Data received:", data);
+      return data;
+    } else {
+      const text = await response.text();
+      console.error("Expected JSON, but got:", text);
+      throw new Error("Unexpected response format");
     }
-    const data = await response.json();
-    return data;
   } catch (error) {
     console.error("Failed to fetch custom data:", error);
-    return null;
   }
 };
 
+// const fetchCustomData = async () => {
+//   try {
+//     const response = await fetch(
+//       `https://centranage.myshopify.com/apps/proxy-1/getCheck?shop=centranage.myshopify.com`,
+//       {
+//         method: "GET",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+//     if (!response.ok) {
+//       throw new Error("Network response was not ok");
+//     }
+//     const data = await response.json();
+//     console.log("Data received:", data);
+//     return data;
+//   } catch (error) {
+//     console.error("Failed to fetch custom data:", error);
+//     return null;
+//   }
+// };
 function Extension() {
   const translate = useTranslate();
   const { extension } = useApi();
@@ -47,10 +84,34 @@ function Extension() {
       </Banner>
     );
   }
+
   const getData = async () => {
-    const data = await fetchCustomData();
-    console.log("isData->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", data);
+    try {
+      let response;
+      fetch("https://api.ipify.org?format=json")
+        .then((response) => {
+          return response.json();
+        })
+        .then(async (res) => {
+          console.log(" IP", res);
+          response = await axios.get(
+            `https://zeen-backend.vercel.app/api/user/getZeenPrefillData/${res.ip}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "api-key": "dj&3jlA*",
+              },
+            }
+          );
+          console.log("Data received:", response.data);
+          // return response.data;
+        })
+        .catch((err) => console.error("Problem fetching my IP", err));
+    } catch (error) {
+      console.error("Failed to fetch custom dataaaa:", error.message);
+    }
   };
+
   // useEffect(() => {
   //   getData();
   // }, []);
@@ -65,14 +126,7 @@ function Extension() {
       <Checkbox onChange={onCheckboxChange}>
         {translate("iWouldLikeAFreeGiftWithMyOrder")}
       </Checkbox>
-      <Button
-        onPress={() => {
-          console.log("button was pressed");
-          getData();
-        }}
-      >
-        Button testing api hit
-      </Button>
+      <Button onPress={getData}>Button testing</Button>
     </BlockStack>
   );
 

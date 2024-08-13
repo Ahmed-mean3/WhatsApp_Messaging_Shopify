@@ -23,11 +23,52 @@ const STATIC_PATH =
     : `${process.cwd()}/frontend/`;
 
 const app = express();
-const corsOptions = {
-  origin: "https://2f17-202-47-48-97.ngrok-free.app", // Allows requests from any origin
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow all HTTP methods
-  allowedHeaders: ["Content-Type", "Authorization"], // Allow specific headers or all headers
-};
+// app.use(
+//   cors({
+//     origin: "https://centranage.myshopify.com/apps/proxy-1",
+//     methods: "GET, POST, PUT, DELETE",
+//     allowedHeaders: "Content-Type, Authorization, Custom-Header",
+//   })
+// );
+const allowedOrigins = [
+  "https://centranage.myshopify.com",
+  "https://extensions.shopifycdn.com",
+];
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       const allowedOrigins = [
+//         "https://centranage.myshopify.com",
+//         "https://extensions.shopifycdn.com",
+//       ];
+//       if (allowedOrigins.includes(origin) || !origin) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     methods: "GET, POST, PUT, DELETE, OPTIONS",
+//     allowedHeaders: "Content-Type, Authorization, Custom-Header",
+//   })
+// );
+// app.options("*", cors()); // Enable preflight for all routes
+app.use(
+  cors({
+    origin: [
+      "https://centranage.myshopify.com",
+      "https://extensions.shopifycdn.com",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Custom-Header"],
+  })
+);
+app.options("*", cors()); // Enable preflight for all routes
+
+// const corsOptions = {
+//   origin: "https://2f17-202-47-48-97.ngrok-free.app", // Allows requests from any origin
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow all HTTP methods
+//   allowedHeaders: ["Content-Type", "Authorization"], // Allow specific headers or all headers
+// };
 // Set up Shopify authentication and webhook handling
 app.get(shopify.config.auth.path, shopify.auth.begin());
 app.get(
@@ -89,8 +130,25 @@ app.post(
 //   }
 // });
 
+app.use("/myApp/*", authentication);
+
+async function authentication(req, res, next) {
+  let shop = req.query.shop;
+  if (!shop) {
+    return res.status(400).json({ message: "Shop parameter is required" });
+  }
+  let storeName = await shopify.config.sessionStorage.findSessionsByShop(shop);
+  const stg = await shopify.api.session.customAppSession(shop);
+  console.log("abc->>>>>>", shop, stg.shop);
+  if (shop === stg.shop) {
+    next();
+  } else {
+    res.send("send not authorized");
+  }
+}
+
 app.use(express.json());
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 // Body-parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -107,35 +165,40 @@ const uri =
 //     deprecationErrors: true,
 //   },
 // });
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-  serverSelectionTimeoutMS: 10000, // Increase this value if needed
-}); // MongoDB connection
-async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    // new MongoClient(uri, {
-    //   // @ts-ignore
-    //   useNewUrlParser: true,
-    //   useUnifiedTopology: true,
-    // });
+// const client = new MongoClient(uri, {
+//   serverApi: {
+//     version: ServerApiVersion.v1,
+//     strict: true,
+//     deprecationErrors: true,
+//   },
+//   serverSelectionTimeoutMS: 10000, // Increase this value if needed
+// }); // MongoDB connection
+// async function run() {
+//   try {
+//     // Connect the client to the server	(optional starting in v4.7)
+//     // new MongoClient(uri, {
+//     //   // @ts-ignore
+//     //   useNewUrlParser: true,
+//     //   useUnifiedTopology: true,
+//     // });
 
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-  } catch (e) {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
-    console.log("client error", e);
-  }
-}
+//     await mongoose.connect(uri);
+
+//     const db = mongoose.connection;
+//     db.on("error", console.error.bind(console, "connection error:"));
+//     db.once("open", () => {
+//       console.log("Connected to MongoDB");
+//     }); // Send a ping to confirm a successful connection
+//     // await client.db("admin").command({ ping: 1 });
+//     // console.log(
+//     //   "Pinged your deployment. You successfully connected to MongoDB!"
+//     // );
+//   } catch (e) {
+//     // Ensures that the client will close when you finish/error
+//     // await client.close();
+//     console.log("client error", e);
+//   }
+// }
 
 // mongoose.connect(
 //   "mongodb+srv://ahmed:UM.$NLwAa_@bj9m@cluster0.md3i4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
@@ -153,22 +216,48 @@ const DataSchema = new mongoose.Schema({
 
 const DataModel = mongoose.model("Data", DataSchema);
 
-// Endpoint to store data
-app.post(
-  "https://2f17-202-47-48-97.ngrok-free.app/api/store-user_data",
-  async (req, res) => {
-    try {
-      console.log("Request body:", req.body);
-      const { key, value } = req.body;
-      const newData = new DataModel({ key, value });
-      await newData.save();
-      res.status(200).send({ message: "Data saved successfully" });
-    } catch (error) {
-      console.error("Error:", error);
-      res.status(500).send({ message: "Failed to save data" });
-    }
+//endpoint tesing for api proxy storefront
+
+// app.get("/myApp/check", async (req, res) => {
+//   res.status(200).send("message send success");
+// });
+app.get("/myApp/getCheck", async (req, res) => {
+  try {
+    const data = await DataModel.find();
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ message: "Failed to retrieve data" });
   }
-);
+});
+
+app.post("/myApp/check", async (req, res) => {
+  const { key, value } = req.body;
+  try {
+    console.log("backend recieved data->>>>>>>>>>>>", key, value);
+    const newData = new DataModel({ key, value });
+    await newData.save();
+    res.status(200).send({ message: "Data saved successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send({ message: "Failed to save data" });
+  }
+  // res.status(200).send(data);
+});
+
+// Endpoint to store data
+app.post("/api/store-user_data", async (req, res) => {
+  try {
+    console.log("Request body:", req.body);
+    const { key, value } = req.body;
+    const newData = new DataModel({ key, value });
+    await newData.save();
+    res.status(200).send({ message: "Data saved successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send({ message: "Failed to save data" });
+  }
+});
 
 // Endpoint to retrieve data
 app.get("/api/get-user_data", async (req, res) => {
@@ -182,9 +271,9 @@ app.get("/api/products/count", async (_req, res) => {
   });
   res.status(200).send(countData);
 });
-app.get("/", async (_req, res) => {
-  res.status(200).json("server started");
-});
+// app.get("/", async (_req, res) => {
+//   res.status(200).json("server started");
+// });
 app.post("/api/products", async (_req, res) => {
   let status = 200;
   let error = null;
@@ -326,7 +415,19 @@ app.use("/*", shopify.ensureInstalledOnShop(), async (_req, res, _next) => {
     .send(readFileSync(join(STATIC_PATH, "index.html")));
 });
 
-app.listen(PORT, () => {
-  run();
-  console.log(`Server running on port ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   run();
+//   console.log(`Server running on port ${PORT}`);
+// });
+mongoose
+  .connect(uri)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(
+        `Database Connected Successfully and server is listening on this port ${PORT}`
+      );
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });

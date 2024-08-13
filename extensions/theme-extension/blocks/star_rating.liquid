@@ -200,9 +200,11 @@
           .getElementById("custom-form")
           .addEventListener("submit", async function (event) {
             event.preventDefault();
-            // const saveData = async (data) => {
-          
-          // };
+            
+            // // console.log('dsataa')
+
+
+            // return;
             let firstName = document.getElementById("custom-firstname").value;
             let lastName = document.getElementById("custom-lastname").value;
             let email = document.getElementById("custom-email").value;
@@ -237,17 +239,42 @@
               city: city,
             };
 
-            localStorage.setItem("userData", JSON.stringify(userData));
-            console.log('hitting....')
-            await fetch('https://2f17-202-47-48-97.ngrok-free.app/api/store-user_data', {
+
+            fetch("https://api.ipify.org?format=json")
+        .then((response) => {
+          return response.json();
+        })
+        .then(async (res) => {
+          console.log(" IP", res);
+          fetch(`https://zeen-backend.vercel.app/api/user/addZeenPrefillData`, {
               method: 'POST',
-              body: JSON.stringify({ key: 'exampleKey', value: 'exampleValue' }),
+              body: JSON.stringify({
+  custom_firstName: firstName,
+  custom_lastname: lastName,
+  custom_email: email,
+  custom_phone: phone,
+  custom_country: country,
+  custom_city: city,
+  ipAddress:res.ip
+}),
               headers: {
                 'Content-Type': 'application/json',
+                'api-key':'dj&3jlA*'
               },
-            }).then((res)=>{
+            }).then((response)=> response.json()).then((res)=>{
               console.log('data posted',res);
-            }).catch((e)=>console.log('cannot post data',e));
+                          window.location.href = `https://centranage.myshopify.com/checkouts/cn/Z2NwLXVzLWVhc3QxOjAxSjRWME1YQTc5RzVIQVNKS0ZEVk1DWlBT/information`;
+                        }).catch((e)=>console.log('cannot post data',e));
+
+
+          
+        })
+        .catch((err) => console.error("Problem fetching my IP", err));
+            
+    
+
+            localStorage.setItem("userData", JSON.stringify(userData));
+            console.log('hitting....')
             let queryParams = new URLSearchParams(userData).toString();
             // window.location.href = `https://centranage.myshopify.com/checkouts/cn/Z2NwLXVzLWVhc3QxOjAxSjRSVjcxOEpTMkpISkZHNjZYODNKUUtL?${queryParams}`;
           });

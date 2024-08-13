@@ -3,13 +3,12 @@
 client_id = "b656bde1b1cb4cab821e35017dadf01e"
 name = "xecrox"
 handle = "xecrox"
-application_url = "https://katrina-educational-election-beings.trycloudflare.com"
+application_url = "https://santa-sans-funky-happened.trycloudflare.com"
 embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
 dev_store_url = "centranage.myshopify.com"
-include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
@@ -17,18 +16,18 @@ scopes = ""
 
 [auth]
 redirect_urls = [
-  "https://katrina-educational-election-beings.trycloudflare.com/auth/callback",
-  "https://katrina-educational-election-beings.trycloudflare.com/auth/shopify/callback",
-  "https://katrina-educational-election-beings.trycloudflare.com/api/auth/callback"
+  "https://santa-sans-funky-happened.trycloudflare.com/auth/callback",
+  "https://santa-sans-funky-happened.trycloudflare.com/auth/shopify/callback",
+  "https://santa-sans-funky-happened.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-07"
 
 [app_proxy]
-url = "https://katrina-educational-election-beings.trycloudflare.com/proxy"
-subpath = "connect"
-prefix = "community"
+url = "https://santa-sans-funky-happened.trycloudflare.com/myApp"
+subpath = "proxy-1"
+prefix = "apps"
 
 [pos]
 embedded = false
